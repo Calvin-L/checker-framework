@@ -16,13 +16,13 @@ abstract class OwnershipWithExceptions {
 
   abstract void transfer(@Owning Closeable resource) throws IOException;
 
-  //  void transferAndPropagateException(@Owning Closeable resource) throws IOException {
-  //    transfer(resource);
-  //  }
+  void transferAndPropagateException(@Owning Closeable resource) throws IOException {
+    transfer(resource);
+  }
 
-  //  void transferHasNoObligationsOnException(@Owning Closeable resource) throws IOException {
-  //    throw new IOException();
-  //  }
+  void transferHasNoObligationsOnException(@Owning Closeable resource) throws IOException {
+    throw new IOException();
+  }
 
   // :: error: (required.method.not.called)
   void transferAndIgnoreExceptionWithoutClosing(@Owning Closeable zzz) {
