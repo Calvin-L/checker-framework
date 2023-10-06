@@ -16,8 +16,14 @@ import org.checkerframework.checker.calledmethods.qual.CalledMethods;
 import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethodsVarArgs;
 import org.checkerframework.common.accumulation.AccumulationVisitor;
 import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.dataflow.expression.JavaExpression;
+import org.checkerframework.framework.flow.CFAbstractStore;
+import org.checkerframework.framework.flow.CFAbstractValue;
 import org.checkerframework.framework.source.DiagMessage;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.util.JavaExpressionParseUtil;
+import org.checkerframework.framework.util.StringToJavaExpression;
+import org.checkerframework.javacutil.AnnotationMirrorSet;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -59,7 +65,47 @@ public class CalledMethodsVisitor extends AccumulationVisitor {
         checker.report(tree, new DiagMessage(Diagnostic.Kind.ERROR, "ensuresvarargs.invalid"));
       }
     }
+    for (EnsuredCalledMethodOnException postcond :
+        ((CalledMethodsAnnotatedTypeFactory) atypeFactory).getExceptionalPostconditions(elt)) {
+      checkExceptionalPostcondition(postcond, tree, elt);
+    }
     return super.visitMethod(tree, p);
+  }
+
+  protected void checkExceptionalPostcondition(
+      EnsuredCalledMethodOnException postcond, MethodTree tree, ExecutableElement elt) {
+    CFAbstractStore<?, ?> exitStore = atypeFactory.getExceptionalExitStore(tree);
+    if (exitStore == null) {
+      // If there is no regular exitStore, then the method cannot throw exceptions and
+      // there is no need to check anything.
+      return;
+    }
+
+    JavaExpression e;
+    try {
+      e = StringToJavaExpression.atMethodBody(postcond.expression, tree, checker);
+    } catch (JavaExpressionParseUtil.JavaExpressionParseException ex) {
+      checker.report(tree, ex.getDiagMessage());
+      return;
+    }
+
+    AnnotationMirror requiredAnno = atypeFactory.createAccumulatorAnnotation(postcond.method);
+
+    CFAbstractValue<?> value = exitStore.getValue(e);
+    AnnotationMirror inferredAnno = null;
+    if (value != null) {
+      AnnotationMirrorSet annos = value.getAnnotations();
+      inferredAnno = qualHierarchy.findAnnotationInSameHierarchy(annos, requiredAnno);
+    }
+
+    if (!checkContract(e, requiredAnno, inferredAnno, exitStore)) {
+      checker.reportError(
+          tree,
+          "contracts.postcondition",
+          tree.getName(),
+          contractExpressionAndType(postcond.expression, inferredAnno),
+          contractExpressionAndType(postcond.expression, requiredAnno));
+    }
   }
 
   @Override

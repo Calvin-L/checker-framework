@@ -6,7 +6,9 @@ import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.Tree;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -20,6 +22,7 @@ import org.checkerframework.checker.calledmethods.qual.CalledMethods;
 import org.checkerframework.checker.calledmethods.qual.CalledMethodsBottom;
 import org.checkerframework.checker.calledmethods.qual.CalledMethodsPredicate;
 import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethodsOnException;
 import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethodsVarArgs;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
@@ -71,6 +74,18 @@ public class CalledMethodsAnnotatedTypeFactory extends AccumulationAnnotatedType
   /** The {@link EnsuresCalledMethodsVarArgs#value} element/argument. */
   /*package-private*/ final ExecutableElement ensuresCalledMethodsVarArgsValueElement =
       TreeUtils.getMethod(EnsuresCalledMethodsVarArgs.class, "value", 0, processingEnv);
+
+  /** The {@link EnsuresCalledMethodsOnException#value} element/argument. */
+  /*package-private*/ final ExecutableElement ensuresCalledMethodsOnExceptionValueElement =
+      TreeUtils.getMethod(EnsuresCalledMethodsOnException.class, "value", 0, processingEnv);
+
+  /** The {@link EnsuresCalledMethodsOnException#methods} element/argument. */
+  /*package-private*/ final ExecutableElement ensuresCalledMethodsOnExceptionMethodsElement =
+      TreeUtils.getMethod(EnsuresCalledMethodsOnException.class, "methods", 0, processingEnv);
+
+  /** The {@link EnsuresCalledMethodsOnException.List#value} element/argument. */
+  /*package-private*/ final ExecutableElement ensuresCalledMethodsOnExceptionListValueElement =
+      TreeUtils.getMethod(EnsuresCalledMethodsOnException.List.class, "value", 0, processingEnv);
 
   /**
    * Create a new CalledMethodsAnnotatedTypeFactory.
@@ -427,5 +442,53 @@ public class CalledMethodsAnnotatedTypeFactory extends AccumulationAnnotatedType
     builder.setValue("methods", calledMethods.toArray(new String[calledMethods.size()]));
     AnnotationMirror am = builder.build();
     return am;
+  }
+
+  public Set<EnsuredCalledMethodOnException> getExceptionalPostconditions(
+      ExecutableElement methodOrConstructor) {
+    Set<EnsuredCalledMethodOnException> result = new LinkedHashSet<>();
+
+    parseEnsuresCalledMethodOnExceptionListAnnotation(
+        getDeclAnnotation(methodOrConstructor, EnsuresCalledMethodsOnException.List.class), result);
+
+    parseEnsuresCalledMethodOnExceptionAnnotation(
+        getDeclAnnotation(methodOrConstructor, EnsuresCalledMethodsOnException.class), result);
+
+    return result;
+  }
+
+  private void parseEnsuresCalledMethodOnExceptionListAnnotation(
+      @Nullable AnnotationMirror annotation, Set<EnsuredCalledMethodOnException> out) {
+    if (annotation == null) {
+      return;
+    }
+
+    List<AnnotationMirror> annotations =
+        AnnotationUtils.getElementValueArray(
+            annotation, ensuresCalledMethodsOnExceptionListValueElement, AnnotationMirror.class);
+
+    for (AnnotationMirror a : annotations) {
+      parseEnsuresCalledMethodOnExceptionAnnotation(a, out);
+    }
+  }
+
+  private void parseEnsuresCalledMethodOnExceptionAnnotation(
+      @Nullable AnnotationMirror annotation, Set<EnsuredCalledMethodOnException> out) {
+    if (annotation == null) {
+      return;
+    }
+
+    List<String> expressions =
+        AnnotationUtils.getElementValueArray(
+            annotation, ensuresCalledMethodsOnExceptionValueElement, String.class);
+    List<String> methods =
+        AnnotationUtils.getElementValueArray(
+            annotation, ensuresCalledMethodsOnExceptionMethodsElement, String.class);
+
+    for (String expr : expressions) {
+      for (String method : methods) {
+        out.add(new EnsuredCalledMethodOnException(expr, method));
+      }
+    }
   }
 }
