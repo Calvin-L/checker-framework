@@ -60,7 +60,7 @@ abstract class OwnershipWithExceptions {
 
   class OwnedField implements Closeable {
 
-    @Owning Closeable resource;
+    final @Owning Closeable resource;
 
     OwnedField() throws IOException {
       // Field assignments in constructors are special.  When the constructor
@@ -73,27 +73,62 @@ abstract class OwnershipWithExceptions {
       }
     }
 
-    //    OwnedField(int ignored) throws IOException {
-    //      // Same as the 0-argument constructor, but handled correctly.
-    //      resource = alloc();
-    //      try {
-    //        if (arbitraryChoice()) {
-    //          throw new IOException();
-    //        }
-    //      } catch (Exception e) {
-    //        resource.close();
-    //        throw e;
-    //      }
-    //    }
+    OwnedField(int ignored) throws IOException {
+      // Same as the 0-argument constructor, but handled correctly (algorithm 1).
+      resource = alloc();
+      try {
+        if (arbitraryChoice()) {
+          throw new IOException();
+        }
+      } catch (Exception e) {
+        resource.close();
+        throw e;
+      }
+    }
 
-    //    OwnedField(@Owning Closeable resource) throws IOException {
-    //      // Although, when the resource was passed by a caller, then we can be
-    //      // more relaxed.  On exception, ownership remains with the caller.
-    //      this.resource = resource;
-    //      if (arbitraryChoice()) {
-    //        throw new IOException();
-    //      }
-    //    }
+    OwnedField(float ignored) throws IOException {
+      // Same as the 0-argument constructor, but handled correctly (algorithm 2).
+      Closeable r = alloc();
+      resource = r;
+      try {
+        if (arbitraryChoice()) {
+          throw new IOException();
+        }
+      } catch (Exception e) {
+        r.close();
+        throw e;
+      }
+    }
+
+    OwnedField(@Owning Closeable resource, int arg) throws IOException {
+      // On exception, ownership of the @Owning argument remains with the caller.
+      // So, this constructor is OK.
+      if (arbitraryChoice()) {
+        throw new IOException();
+      }
+      this.resource = resource;
+    }
+
+    OwnedField(@Owning Closeable resource, boolean arg) throws IOException {
+      // Same as the previous constructor, but in the other order.
+      this.resource = resource;
+      if (arbitraryChoice()) {
+        throw new IOException();
+      }
+    }
+
+    @Override
+    @EnsuresCalledMethods(
+        value = "this.resource",
+        methods = {"close"})
+    public void close() throws IOException {
+      resource.close();
+    }
+  }
+
+  class MutableOwnedField implements Closeable {
+
+    @Owning Closeable resource;
 
     @RequiresCalledMethods(
         value = "this.resource",

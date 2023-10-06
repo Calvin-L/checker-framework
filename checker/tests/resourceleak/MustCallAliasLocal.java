@@ -9,6 +9,8 @@ public class MustCallAliasLocal implements Closeable {
 
   final @Owning Closeable foo;
 
+  // The error on the following line is a false positive:
+  // :: error: mustcallalias.out.of.scope
   public @MustCallAlias MustCallAliasLocal(@MustCallAlias Closeable foo) {
     Closeable local = foo;
     // The error on the following line is a false positive:
