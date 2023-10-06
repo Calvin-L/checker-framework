@@ -121,6 +121,9 @@ abstract class OwnershipWithExceptions {
     @EnsuresCalledMethods(
         value = "this.resource",
         methods = {"close"})
+    @EnsuresCalledMethodsOnException(
+        value = "this.resource",
+        methods = {"close"})
     public void close() throws IOException {
       resource.close();
     }
@@ -146,6 +149,9 @@ abstract class OwnershipWithExceptions {
 
     @Override
     @EnsuresCalledMethods(
+        value = "this.resource",
+        methods = {"close"})
+    @EnsuresCalledMethodsOnException(
         value = "this.resource",
         methods = {"close"})
     public void close() throws IOException {

@@ -1,7 +1,7 @@
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintStream;
-import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.calledmethods.qual.*;
 import org.checkerframework.checker.mustcall.qual.CreatesMustCallFor;
 import org.checkerframework.checker.mustcall.qual.InheritableMustCall;
 import org.checkerframework.checker.mustcall.qual.MustCall;
@@ -21,6 +21,7 @@ class StaticOwningField implements Closeable {
   }
 
   @EnsuresCalledMethods(value = "ps_instance", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "ps_instance", methods = "close")
   @Override
   public void close() {
     ps_instance.close();

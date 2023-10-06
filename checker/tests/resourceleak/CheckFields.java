@@ -67,6 +67,9 @@ class CheckFields {
     @EnsuresCalledMethods(
         value = {"this.finalOwningFoo", "this.owningFoo"},
         methods = {"a"})
+    @EnsuresCalledMethodsOnException(
+        value = {"this.finalOwningFoo", "this.owningFoo"},
+        methods = {"a"})
     void b() {
       this.finalOwningFoo.a();
       this.finalOwningFoo.c();
@@ -164,6 +167,7 @@ class CheckFields {
     }
 
     @EnsuresCalledMethods(value = "this.foo", methods = "a")
+    @EnsuresCalledMethodsOnException(value = "this.foo", methods = "a")
     void f() {
       this.foo.a();
     }

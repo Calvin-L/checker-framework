@@ -18,6 +18,9 @@ class MultipleOwnedResources implements Closeable {
   @EnsuresCalledMethods(
       value = {"r1", "r2"},
       methods = {"close"})
+  @EnsuresCalledMethodsOnException(
+      value = {"r1", "r2"},
+      methods = {"close"})
   public void close() throws IOException {
     try {
       r1.close();

@@ -18,6 +18,7 @@ class ManualMustCallEmptyOnConstructor {
     }
 
     @EnsuresCalledMethods(value = "this.is", methods = "close")
+    @EnsuresCalledMethodsOnException(value = "this.is", methods = "close")
     void a() throws Exception {
       is.close();
     }

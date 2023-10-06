@@ -36,6 +36,9 @@ public class MustCallAliasNotThis implements Closeable {
   @EnsuresCalledMethods(
       value = {"this.foo"},
       methods = {"close"})
+  @EnsuresCalledMethodsOnException(
+      value = {"this.foo"},
+      methods = {"close"})
   public void close() throws IOException {
     this.foo.close();
   }
@@ -45,6 +48,9 @@ public class MustCallAliasNotThis implements Closeable {
 
     @Override
     @EnsuresCalledMethods(
+        value = {"this.baz"},
+        methods = {"close"})
+    @EnsuresCalledMethodsOnException(
         value = {"this.baz"},
         methods = {"close"})
     public void close() throws IOException {

@@ -35,6 +35,7 @@ class CreatesMustCallForOverride2 {
 
     @Override
     @EnsuresCalledMethods(value = "this.myFoo", methods = "a")
+    @EnsuresCalledMethodsOnException(value = "this.myFoo", methods = "a")
     public void a() {
       super.a();
       myFoo.a();
@@ -53,6 +54,7 @@ class CreatesMustCallForOverride2 {
 
     @Override
     @EnsuresCalledMethods(value = "this.myFoo", methods = "a")
+    @EnsuresCalledMethodsOnException(value = "this.myFoo", methods = "a")
     public void a() {
       super.a();
       myFoo.a();

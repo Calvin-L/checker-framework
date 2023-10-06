@@ -60,6 +60,7 @@ class SocketField {
   }
 
   @EnsuresCalledMethods(value = "this.socket", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.socket", methods = "close")
   private void closeSocket() throws IOException {
     this.socket.close();
   }

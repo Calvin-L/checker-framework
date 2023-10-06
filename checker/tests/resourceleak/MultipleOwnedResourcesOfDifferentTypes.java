@@ -33,6 +33,12 @@ class MultipleOwnedResourcesOfDifferentTypes {
     @EnsuresCalledMethods(
         value = {"this.owningFoo"},
         methods = {"a"})
+    @EnsuresCalledMethodsOnException(
+        value = {"owningBar"},
+        methods = {"b"})
+    @EnsuresCalledMethodsOnException(
+        value = {"this.owningFoo"},
+        methods = {"a"})
     void finalizer() {
       try {
         this.owningFoo.a();

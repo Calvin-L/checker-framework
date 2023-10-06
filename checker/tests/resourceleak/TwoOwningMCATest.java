@@ -17,11 +17,13 @@ class TwoOwningMCATest {
   }
 
   @EnsuresCalledMethods(value = "this.f1", methods = "a")
+  @EnsuresCalledMethodsOnException(value = "this.f1", methods = "a")
   void finish1() {
     this.f1.a();
   }
 
   @EnsuresCalledMethods(value = "this.f2", methods = "a")
+  @EnsuresCalledMethodsOnException(value = "this.f2", methods = "a")
   void finish2() {
     this.f2.a();
   }

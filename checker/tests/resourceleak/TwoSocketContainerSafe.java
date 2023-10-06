@@ -16,11 +16,17 @@ public class TwoSocketContainerSafe {
   @EnsuresCalledMethods(
       value = "this.s1",
       methods = {"close"})
+  @EnsuresCalledMethodsOnException(
+      value = "this.s1",
+      methods = {"close"})
   public void close1() throws java.io.IOException {
     s1.close();
   }
 
   @EnsuresCalledMethods(
+      value = "this.s2",
+      methods = {"close"})
+  @EnsuresCalledMethodsOnException(
       value = "this.s2",
       methods = {"close"})
   public void close2() throws java.io.IOException {

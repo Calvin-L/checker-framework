@@ -17,6 +17,7 @@ public class MustCallAliasNormalExit {
   }
 
   @EnsuresCalledMethods(value = "this.is", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.is", methods = "close")
   public void close() throws IOException {
     this.is.close();
   }

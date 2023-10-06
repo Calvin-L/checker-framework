@@ -4,7 +4,7 @@
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.calledmethods.qual.*;
 import org.checkerframework.checker.mustcall.qual.Owning;
 
 class ReplicaInputStreams2 implements Closeable {
@@ -19,6 +19,9 @@ class ReplicaInputStreams2 implements Closeable {
 
   @Override
   @EnsuresCalledMethods(
+      value = {"this.in1", "this.in2"},
+      methods = {"close"})
+  @EnsuresCalledMethodsOnException(
       value = {"this.in1", "this.in2"},
       methods = {"close"})
   public void close() throws IOException {

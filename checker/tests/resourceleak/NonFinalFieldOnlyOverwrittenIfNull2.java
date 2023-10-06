@@ -2,7 +2,7 @@
 // if the field is definitely null.
 
 import java.io.*;
-import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.calledmethods.qual.*;
 import org.checkerframework.checker.mustcall.qual.CreatesMustCallFor;
 import org.checkerframework.checker.mustcall.qual.InheritableMustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
@@ -49,6 +49,7 @@ class NonFinalFieldOnlyOverwrittenIfNull2 {
   } */
 
   @EnsuresCalledMethods(value = "this.is", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.is", methods = "close")
   @CreatesMustCallFor
   void close() throws Exception {
     if (is != null) {

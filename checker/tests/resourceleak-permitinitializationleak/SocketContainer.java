@@ -20,6 +20,7 @@ class SocketContainer {
   }
 
   @EnsuresCalledMethods(value = "this.sock", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.sock", methods = "close")
   public void close() throws IOException {
     sock.close();
     // It's okay to assign a field to null after its obligations have been fulfilled,

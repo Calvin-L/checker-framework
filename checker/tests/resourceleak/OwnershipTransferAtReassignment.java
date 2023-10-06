@@ -1,6 +1,6 @@
 // Test case for https://github.com/typetools/checker-framework/issues/5971
 
-import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.calledmethods.qual.*;
 import org.checkerframework.checker.mustcall.qual.CreatesMustCallFor;
 import org.checkerframework.checker.mustcall.qual.InheritableMustCall;
 import org.checkerframework.checker.mustcall.qual.Owning;
@@ -18,6 +18,7 @@ public class OwnershipTransferAtReassignment {
   }
 
   @EnsuresCalledMethods(value = "this.head", methods = "disconnect")
+  @EnsuresCalledMethodsOnException(value = "this.head", methods = "disconnect")
   public void disconnect() {
     head.disconnect();
   }
@@ -31,6 +32,7 @@ public class OwnershipTransferAtReassignment {
     }
 
     @EnsuresCalledMethods(value = "this.next", methods = "disconnect")
+    @EnsuresCalledMethodsOnException(value = "this.next", methods = "disconnect")
     public void disconnect() {
       next.disconnect();
     }

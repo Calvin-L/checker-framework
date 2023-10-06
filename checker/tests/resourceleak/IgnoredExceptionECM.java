@@ -1,7 +1,7 @@
 // A test that the Resource Leak Checker ignores exceptions in destructors the same way that it
 // does in the consistency checker.
 
-import org.checkerframework.checker.calledmethods.qual.EnsuresCalledMethods;
+import org.checkerframework.checker.calledmethods.qual.*;
 import org.checkerframework.checker.mustcall.qual.*;
 
 @InheritableMustCall("foo")
@@ -11,6 +11,7 @@ class IgnoredExceptionECM {
   @MustCall("toString") Object obj;
 
   @EnsuresCalledMethods(value = "this.obj", methods = "toString")
+  @EnsuresCalledMethodsOnException(value = "this.obj", methods = "toString")
   void foo() {
     // This line will produce an exception,
     // which the RLC should ignore and verify the method.

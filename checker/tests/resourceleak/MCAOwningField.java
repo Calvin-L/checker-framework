@@ -19,6 +19,7 @@ class MCAOwningField {
   }
 
   @EnsuresCalledMethods(value = "s", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "s", methods = "close")
   void stop() throws Exception {
     s.close();
   }

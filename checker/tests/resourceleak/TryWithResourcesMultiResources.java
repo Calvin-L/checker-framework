@@ -16,6 +16,9 @@ public class TryWithResourcesMultiResources {
     @EnsuresCalledMethods(
         value = {"this.socket"},
         methods = {"close"})
+    @EnsuresCalledMethodsOnException(
+        value = {"this.socket"},
+        methods = {"close"})
     public void close() throws IOException {
       this.socket.close();
     }

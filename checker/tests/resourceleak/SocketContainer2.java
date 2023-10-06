@@ -18,6 +18,7 @@ class SocketContainer2 {
   }
 
   @EnsuresCalledMethods(value = "this.sock", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.sock", methods = "close")
   public void close() throws IOException {
     sock.close();
   }

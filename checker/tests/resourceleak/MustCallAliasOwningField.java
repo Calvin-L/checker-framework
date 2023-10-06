@@ -17,6 +17,7 @@ public @InheritableMustCall("shutdown") class MustCallAliasOwningField {
   }
 
   @EnsuresCalledMethods(value = "this.input", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.input", methods = "close")
   public void shutdown() throws IOException {
     input.close();
   }

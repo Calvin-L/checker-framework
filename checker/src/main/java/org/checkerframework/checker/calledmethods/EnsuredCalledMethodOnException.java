@@ -2,7 +2,7 @@ package org.checkerframework.checker.calledmethods;
 
 import java.util.Objects;
 
-class EnsuredCalledMethodOnException {
+public class EnsuredCalledMethodOnException {
 
   public final String expression;
   public final String method;

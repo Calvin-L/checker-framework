@@ -44,6 +44,9 @@ public class RequiresCalledMethodsTest {
     @EnsuresCalledMethods(
         value = {"this.foo"},
         methods = {"a"})
+    @EnsuresCalledMethodsOnException(
+        value = {"this.foo"},
+        methods = {"a"})
     void releaseFoo() {
       if (this.foo != null) {
         foo.a();

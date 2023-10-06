@@ -67,6 +67,7 @@ class CreatesMustCallForTargets {
   }
 
   @EnsuresCalledMethods(value = "this.is1", methods = "close")
+  @EnsuresCalledMethodsOnException(value = "this.is1", methods = "close")
   void a() throws Exception {
     is1.close();
   }

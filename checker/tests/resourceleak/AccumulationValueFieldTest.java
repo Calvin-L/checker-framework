@@ -33,6 +33,9 @@ public class AccumulationValueFieldTest {
     @EnsuresCalledMethods(
         value = {"this.m"},
         methods = {"a"})
+    @EnsuresCalledMethodsOnException(
+        value = {"this.m"},
+        methods = {"a"})
     void a() {
       m.a();
     }

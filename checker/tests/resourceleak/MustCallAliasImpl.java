@@ -17,6 +17,9 @@ public class MustCallAliasImpl implements Closeable {
   @EnsuresCalledMethods(
       value = {"this.foo"},
       methods = {"close"})
+  @EnsuresCalledMethodsOnException(
+      value = {"this.foo"},
+      methods = {"close"})
   public void close() throws IOException {
     this.foo.close();
   }
